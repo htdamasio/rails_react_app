@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { API_URL } from "../../constants"
 
 interface PostItem {
@@ -15,22 +15,23 @@ function PostsList() {
   // Fetch posts from api
   useEffect(() => {
     async function loadPosts() {
-      try {
-        const response = await fetch(`${API_URL}/posts`);
-        if (response.ok) {
-          const json = await response.json();
-          setPosts(json);
-        } else {
-          throw response;
-        }
-      } 
-      catch (e: unknown) {
-        setError("An error occured. Awkward...");
-        console.log("An error occured:", e);
-      }
-      finally {
-        setLoading(false);
-      }
+        fetch(`${API_URL}/posts`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json()
+        })
+        .then(json => {
+          setPosts(json)   
+        })
+        .catch(e => {
+          setError("An error occured. Awkward...");
+          console.log("An error occured:", e);  
+        })
+        .finally(() => {
+          setLoading(false); 
+        })
     }
 
     loadPosts();
